@@ -53,24 +53,17 @@
   <script src="login.js"></script>
 
   <script>
-    // =================================================================
-    // BACKEND INTEGRATION - LOGIN
-    // =================================================================
-
     // API Configuration
     const API_BASE_URL = 'https://medic-africa-1.onrender.com';
 
     // Login Form Handler
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      // STEP 1: Prevent default form submission (stops page reload)
       e.preventDefault();
 
-      // STEP 2: Get input values
       const username = document.getElementById('username').value;
       const password = document.getElementById('loginPassword').value;
       const rememberMe = document.getElementById('rememberLogin').checked;
 
-      // STEP 3: Get submit button to show loading state
       const submitBtn = e.target.querySelector('input[type="submit"]');
       const originalBtnText = submitBtn.value;
 
@@ -79,29 +72,27 @@
       submitBtn.value = 'Logging in...';
 
       try {
-        // STEP 4: Send POST request to backend login endpoint
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: username, // Backend expects 'email' field
+            email: username,
             password: password
           })
         });
 
-        // STEP 5: Parse the JSON response from backend
         const data = await response.json();
 
-        // STEP 6: Check if login was successful
         if (response.ok) {
           // SUCCESS! Store the authentication token
-          if (data.token) {
-            localStorage.setItem('authToken', data.token);
+          // Backend returns 'access_token' not 'token'
+          if (data.access_token) {
+            localStorage.setItem('authToken', data.access_token);
           }
 
-          // Store user data if provided by backend
+          // Store user data
           if (data.user) {
             localStorage.setItem('userData', JSON.stringify(data.user));
           }
@@ -118,16 +109,14 @@
           window.location.href = '../index.html';
 
         } else {
-          // FAILED: Show error message from backend
-          alert('❌ Login failed: ' + (data.message || 'Invalid email or password'));
+          // Show error message from backend
+          alert('❌ Login failed: ' + (data.error || data.message || 'Invalid email or password'));
         }
 
       } catch (error) {
-        // STEP 7: Handle network errors or exceptions
         console.error('Error:', error);
         alert('❌ Connection error. Please check your internet and try again.');
       } finally {
-        // STEP 8: Always restore button state (whether success or failure)
         submitBtn.disabled = false;
         submitBtn.value = originalBtnText;
       }

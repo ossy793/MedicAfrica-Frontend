@@ -24,27 +24,39 @@
   <div class="main_div">
     <div class="title">Register Now</div>
     <form id="registerForm" action="#">
+      <!-- ADD FULL NAME FIELD -->
       <div class="input_box">
-        <input id="email" type="email" placeholder="Email" required>
+        <input id="fullName" type="text" placeholder="Full Name" required>
         <div class="icon"><i class="fa-solid fa-user"></i></div>
       </div>
+
       <div class="input_box">
-        <input id="phone" type="tel" placeholder="Phone Number" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <div class="icon"><i class="fa-solid fa-envelope"></i></div>
       </div>
+
+      <div class="input_box">
+        <input id="phone" type="tel" placeholder="Phone Number (optional)">
+        <div class="icon"><i class="fa-solid fa-phone"></i></div>
+      </div>
+
       <div class="input_box">
         <input id="password" type="password" placeholder="Create Password" required>
         <div class="icon"><i class="fa-solid fa-lock"></i></div>
       </div>
+
       <div class="input_box">
         <input id="confirmPassword" type="password" placeholder="Confirm New Password" required>
         <div class="icon"><i class="fa-solid fa-lock"></i></div>
       </div>
+
       <div class="option_div">
         <div class="check_box">
           <input type="checkbox" id="rememberMe">
           <span>Remember me</span>
         </div>
       </div>
+
       <div class="input_box button">
         <input type="submit" value="Register">
       </div>
@@ -60,6 +72,8 @@
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
+      // UPDATED: Get all form values including full_name
+      const fullName = document.getElementById('fullName').value;
       const email = document.getElementById('email').value;
       const phone = document.getElementById('phone').value;
       const password = document.getElementById('password').value;
@@ -84,17 +98,12 @@
         return;
       }
 
-      // Validate phone number
-      if (phone.length < 10) {
-        alert('Please enter a valid phone number!');
-        return;
-      }
-
       // Disable button and show loading
       submitBtn.disabled = true;
       submitBtn.value = 'Registering...';
 
       try {
+        // UPDATED: Send data matching backend expectations
         const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
           method: 'POST',
           headers: {
@@ -102,19 +111,22 @@
           },
           body: JSON.stringify({
             email: email,
-            phone: phone,
-            password: password
+            password: password,
+            full_name: fullName,  // REQUIRED by backend
+            phone: phone || null  // Optional field
           })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          alert('Registration successful! Redirecting to login...');
+          alert('✅ Registration successful! Redirecting to login...');
 
-          // Optional: Auto-login after registration
-          if (data.token) {
-            localStorage.setItem('authToken', data.token);
+          // Store token and user data (backend returns access_token now)
+          if (data.access_token) {
+            localStorage.setItem('authToken', data.access_token);
+          }
+          if (data.user) {
             localStorage.setItem('userData', JSON.stringify(data.user));
           }
 
@@ -124,11 +136,11 @@
           }, 1000);
         } else {
           // Show error message from backend
-          alert('Registration failed: ' + (data.message || 'Please try again'));
+          alert('❌ Registration failed: ' + (data.error || data.message || 'Please try again'));
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred. Please check your connection and try again.');
+        alert('❌ An error occurred. Please check your connection and try again.');
       } finally {
         // Re-enable button
         submitBtn.disabled = false;
