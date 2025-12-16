@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Medic Africa</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+  integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <i class="fa fa-medkit" aria-hidden="true"></i>
+      Medic Africa
+    </div>
+    <div>
+      <a id="homeLink" href="../index.html">Home</a>
+      <a id="loginLink" href="login.html">Login</a>
+      <a id="bookLink" href="../page-2/index.html">Book Appointment</a>
+    </div>
+  </nav>
+  <div class="main_div">
+    <div class="title">Health Portal Login</div>
+    <form id="loginForm" action="#">
+      <div class="input_box">
+        <input id="username" type="text" placeholder="Email or Username" required>
+        <div class="icon"><i class="fa-solid fa-user"></i></div>
+      </div>
+      <div class="input_box">
+        <input id="loginPassword" type="password" placeholder="Password" required>
+        <div class="icon"><i class="fa-solid fa-lock"></i></div>
+      </div>
+      <div class="option_div">
+        <div class="check_box">
+          <input type="checkbox" id="rememberLogin">
+          <span>Remember me</span>
+        </div>
+        <div class="forget_div">
+          <a href="#">Forget password</a>
+        </div>
+      </div>
+      <div class="input_box button">
+        <input type="submit" value="Login">
+      </div>
+      <div class="sign_up">
+        New User? <a id="registerLink" href="register.html">Signup now</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="login.js"></script>
+
+  <script>
+    // =================================================================
+    // BACKEND INTEGRATION - LOGIN
+    // =================================================================
+
+    // API Configuration
+    const API_BASE_URL = 'https://medic-africa-1.onrender.com';
+
+    // Login Form Handler
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      // STEP 1: Prevent default form submission (stops page reload)
+      e.preventDefault();
+
+      // STEP 2: Get input values
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('loginPassword').value;
+      const rememberMe = document.getElementById('rememberLogin').checked;
+
+      // STEP 3: Get submit button to show loading state
+      const submitBtn = e.target.querySelector('input[type="submit"]');
+      const originalBtnText = submitBtn.value;
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.value = 'Logging in...';
+
+      try {
+        // STEP 4: Send POST request to backend login endpoint
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: username, // Backend expects 'email' field
+            password: password
+          })
+        });
+
+        // STEP 5: Parse the JSON response from backend
+        const data = await response.json();
+
+        // STEP 6: Check if login was successful
+        if (response.ok) {
+          // SUCCESS! Store the authentication token
+          if (data.token) {
+            localStorage.setItem('authToken', data.token);
+          }
+
+          // Store user data if provided by backend
+          if (data.user) {
+            localStorage.setItem('userData', JSON.stringify(data.user));
+          }
+
+          // Store remember me preference
+          if (rememberMe) {
+            localStorage.setItem('rememberMe', 'true');
+          }
+
+          // Show success message
+          alert('✅ Login successful! Welcome back.');
+
+          // Redirect to home page
+          window.location.href = '../index.html';
+
+        } else {
+          // FAILED: Show error message from backend
+          alert('❌ Login failed: ' + (data.message || 'Invalid email or password'));
+        }
+
+      } catch (error) {
+        // STEP 7: Handle network errors or exceptions
+        console.error('Error:', error);
+        alert('❌ Connection error. Please check your internet and try again.');
+      } finally {
+        // STEP 8: Always restore button state (whether success or failure)
+        submitBtn.disabled = false;
+        submitBtn.value = originalBtnText;
+      }
+    });
+  </script>
+</body>
+</html>

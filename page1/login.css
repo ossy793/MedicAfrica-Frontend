@@ -1,0 +1,212 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+html, body {
+  place-items: center;
+  display: grid;
+  height: 100vh;
+  background: linear-gradient(135deg, #c9dce8, #0077b6);
+}
+
+nav {
+  background: #0077b6;
+  padding: 15px 30px;
+  display: flex;
+  top: 0;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+nav .logo {
+  font-weight: bold;
+  font-size: x-large;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 25px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  opacity: 0.8;
+}
+
+nav a.active {
+  border-bottom: 3px solid #fff;
+  padding-bottom: 5px;
+}
+
+.main_div {
+  width: 400px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 35px;
+  display: grid;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin-top: 60px;
+}
+
+.main_div .title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+form {
+  margin-top: 10px;
+}
+
+form .input_box {
+  height: 50px;
+  width: 100%;
+  position: relative;
+  margin-top: 20px;
+}
+
+.input_box input {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  padding-left: 45px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.input_box input::placeholder {
+  color: #999;
+}
+
+.input_box input:focus {
+  border-color: #0077b6;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 119, 182, 0.3);
+}
+
+.input_box .icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  color: #666;
+  transform: translateY(-50%);
+  font-size: 18px;
+}
+
+form .option_div {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option_div .check_box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.option_div .check_box input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.option_div span {
+  font-size: 14px;
+  color: #555;
+}
+
+.option_div .forget_div a {
+  font-size: 14px;
+  color: #0077b6;
+  font-weight: 600;
+}
+
+.button {
+  margin-top: 25px !important;
+}
+
+.button input {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  padding-left: 0;
+  background: #0077b6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.button input:hover {
+  background: #005f8f;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 119, 182, 0.3);
+}
+
+.button input:active {
+  transform: translateY(0);
+}
+
+form .sign_up {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+  color: #555;
+}
+
+.sign_up a {
+  color: #0077b6;
+  font-weight: 600;
+}
+
+form a {
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+form a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .main_div {
+    width: 95%;
+    padding: 30px 25px;
+  }
+
+  nav {
+    padding: 12px 20px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  nav a {
+    margin-left: 15px;
+    font-size: 14px;
+  }
+
+  .main_div .title {
+    font-size: 24px;
+  }
+}

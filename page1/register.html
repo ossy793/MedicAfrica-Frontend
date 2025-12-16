@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Medic Africa</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+  integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"/>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <i class="fa fa-medkit" aria-hidden="true"></i>
+      Medic Africa
+    </div>
+    <div>
+      <a id="homeLink" href="../index.html">Home</a>
+      <a id="loginLink" href="login.html">Login</a>
+      <a id="bookLink" href="../page-2/index.html">Book Appointment</a>
+    </div>
+  </nav>
+  <div class="main_div">
+    <div class="title">Register Now</div>
+    <form id="registerForm" action="#">
+      <div class="input_box">
+        <input id="email" type="email" placeholder="Email" required>
+        <div class="icon"><i class="fa-solid fa-user"></i></div>
+      </div>
+      <div class="input_box">
+        <input id="phone" type="tel" placeholder="Phone Number" required>
+      </div>
+      <div class="input_box">
+        <input id="password" type="password" placeholder="Create Password" required>
+        <div class="icon"><i class="fa-solid fa-lock"></i></div>
+      </div>
+      <div class="input_box">
+        <input id="confirmPassword" type="password" placeholder="Confirm New Password" required>
+        <div class="icon"><i class="fa-solid fa-lock"></i></div>
+      </div>
+      <div class="option_div">
+        <div class="check_box">
+          <input type="checkbox" id="rememberMe">
+          <span>Remember me</span>
+        </div>
+      </div>
+      <div class="input_box button">
+        <input type="submit" value="Register">
+      </div>
+    </form>
+  </div>
+
+  <script src="login.js"></script>
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'https://medic-africa-1.onrender.com';
+
+    // Register Form Handler
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const submitBtn = e.target.querySelector('input[type="submit"]');
+
+      // Client-side validation
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      if (password.length < 8) {
+        alert('Password must be at least 8 characters long!');
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address!');
+        return;
+      }
+
+      // Validate phone number
+      if (phone.length < 10) {
+        alert('Please enter a valid phone number!');
+        return;
+      }
+
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      submitBtn.value = 'Registering...';
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            phone: phone,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Registration successful! Redirecting to login...');
+
+          // Optional: Auto-login after registration
+          if (data.token) {
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('userData', JSON.stringify(data.user));
+          }
+
+          // Redirect to login page
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1000);
+        } else {
+          // Show error message from backend
+          alert('Registration failed: ' + (data.message || 'Please try again'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please check your connection and try again.');
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.value = 'Register';
+      }
+    });
+  </script>
+</body>
+</html>
